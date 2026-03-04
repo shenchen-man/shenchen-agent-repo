@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>欢迎页面</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="app">
+    <section class="welcome-card" aria-labelledby="welcomeText">
+      <div class="card-header">
+        <h1 id="welcomeText">欢迎来到我的 Web 应用！</h1>
+        <button id="openSettingsBtn" class="settings-btn" type="button" aria-haspopup="dialog" aria-controls="settingsDialog">
+          设置
+        </button>
+      </div>
+      <p class="label">当前时间</p>
+      <p id="currentTime" class="time" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <div id="settingsDialog" class="dialog hidden" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <div class="dialog-panel">
+      <div class="dialog-header">
+        <h2 id="settingsTitle">欢迎设置</h2>
+      </div>
+      <form id="settingsForm">
+        <label for="welcomeInput">欢迎文案</label>
+        <input id="welcomeInput" name="welcomeText" type="text" maxlength="60" required>
+
+        <label for="timeFormatSelect">时间格式</label>
+        <select id="timeFormatSelect" name="hour12">
+          <option value="false">24 小时制</option>
+          <option value="true">12 小时制</option>
+        </select>
+
+        <div class="dialog-actions">
+          <button id="resetBtn" type="button" class="secondary">恢复默认</button>
+          <button id="cancelBtn" type="button" class="secondary">取消</button>
+          <button type="submit" class="primary">保存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <p id="toast" class="toast hidden" role="status" aria-live="polite"></p>
+
+  <script src="./app.js"></script>
+</body>
+</html>
