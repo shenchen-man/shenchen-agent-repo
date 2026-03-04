@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>欢迎界面</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1 id="welcomeText" class="welcome-text">欢迎爸爸</h1>
+
+      <p class="time-title">当前时间</p>
+      <p id="currentTime" class="current-time"></p>
+
+      <button id="toggleSettings" class="btn">设置</button>
+
+      <section id="settingsPanel" class="settings-panel hidden">
+        <label for="welcomeInput" class="label">欢迎文本</label>
+        <input
+          id="welcomeInput"
+          class="input"
+          type="text"
+          placeholder="请输入欢迎文本"
+          maxlength="40"
+        />
+
+        <div class="actions">
+          <button id="saveBtn" class="btn primary">保存</button>
+          <button id="resetBtn" class="btn secondary">恢复默认</button>
+        </div>
+
+        <p id="statusMessage" class="status-message" aria-live="polite"></p>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
