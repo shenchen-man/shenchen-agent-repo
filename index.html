@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Text Display</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --primary: #2563eb;
+      --border: #d1d5db;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC",
+        "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .app {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      position: relative;
+    }
+
+    .display-text {
+      font-size: clamp(28px, 6vw, 56px);
+      font-weight: 600;
+      text-align: center;
+      word-break: break-word;
+      max-width: min(800px, 90vw);
+    }
+
+    .settings-trigger {
+      position: fixed;
+      right: 18px;
+      top: 18px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--card);
+      color: var(--text);
+      padding: 10px 14px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .settings-panel {
+      position: fixed;
+      right: 18px;
+      top: 62px;
+      width: min(340px, calc(100vw - 36px));
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 10px 24px rgba(31, 41, 55, 0.14);
+      padding: 14px;
+      display: none;
+    }
+
+    .settings-panel.open {
+      display: block;
+    }
+
+    .panel-title {
+      margin: 0 0 8px 0;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .panel-desc {
+      margin: 0 0 10px 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .input {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 10px;
+      font-size: 14px;
+      outline: none;
+      margin-bottom: 10px;
+    }
+
+    .input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #fff;
+      padding: 8px 12px;
+      font-size: 13px;
+      cursor: pointer;
+      color: var(--text);
+    }
+
+    .btn-primary {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <button id="settingsBtn" class="settings-trigger" type="button">设置</button>
+
+    <section id="settingsPanel" class="settings-panel" aria-hidden="true">
+      <h2 class="panel-title">显示文本设置</h2>
+      <p class="panel-desc">输入想展示的内容，留空会恢复默认值。</p>
+      <input id="textInput" class="input" type="text" placeholder="请输入显示文本" />
+      <div class="actions">
+        <button id="resetBtn" class="btn" type="button">重置</button>
+        <button id="saveBtn" class="btn btn-primary" type="button">保存</button>
+      </div>
+    </section>
+
+    <div id="displayText" class="display-text">hi you~</div>
+  </main>
+
+  <script>
+    (function () {
+      var DEFAULT_TEXT = "hi you~";
+      var STORAGE_KEY = "customDisplayText";
+      var displayNode = document.getElementById("displayText");
+      var settingsBtn = document.getElementById("settingsBtn");
+      var settingsPanel = document.getElementById("settingsPanel");
+      var textInput = document.getElementById("textInput");
+      var saveBtn = document.getElementById("saveBtn");
+      var resetBtn = document.getElementById("resetBtn");
+
+      function readSavedText() {
+        var value = localStorage.getItem(STORAGE_KEY);
+        if (value === null || value.trim() === "") {
+          return DEFAULT_TEXT;
+        }
+        return value;
+      }
+
+      function applyText(value) {
+        displayNode.textContent = value;
+      }
+
+      function togglePanel(forceOpen) {
+        var isOpen = forceOpen !== undefined ? forceOpen : !settingsPanel.classList.contains("open");
+        settingsPanel.classList.toggle("open", isOpen);
+        settingsPanel.setAttribute("aria-hidden", String(!isOpen));
+        if (isOpen) {
+          textInput.focus();
+          textInput.select();
+        }
+      }
+
+      function saveText() {
+        var trimmed = textInput.value.trim();
+        var finalText = trimmed === "" ? DEFAULT_TEXT : trimmed;
+        if (trimmed === "") {
+          localStorage.removeItem(STORAGE_KEY);
+        } else {
+          localStorage.setItem(STORAGE_KEY, finalText);
+        }
+        applyText(finalText);
+        togglePanel(false);
+      }
+
+      function resetText() {
+        localStorage.removeItem(STORAGE_KEY);
+        textInput.value = DEFAULT_TEXT;
+        applyText(DEFAULT_TEXT);
+      }
+
+      applyText(readSavedText());
+      textInput.value = displayNode.textContent;
+
+      settingsBtn.addEventListener("click", function () {
+        textInput.value = displayNode.textContent;
+        togglePanel();
+      });
+
+      saveBtn.addEventListener("click", saveText);
+      resetBtn.addEventListener("click", resetText);
+
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+          togglePanel(false);
+        }
+        if (event.key === "Enter" && settingsPanel.classList.contains("open")) {
+          saveText();
+        }
+      });
+
+      document.addEventListener("click", function (event) {
+        var clickedInsidePanel = settingsPanel.contains(event.target);
+        var clickedSettingsBtn = settingsBtn.contains(event.target);
+        if (!clickedInsidePanel && !clickedSettingsBtn) {
+          togglePanel(false);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
