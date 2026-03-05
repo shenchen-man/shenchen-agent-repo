@@ -1,0 +1,10 @@
+{
+  "name": "welcome-time-webapp",
+  "version": "1.0.0",
+  "description": "A simple web app showing configurable welcome text and current time.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "license": "MIT"
+}
